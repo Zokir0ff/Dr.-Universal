@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ Панель - Dr. Universal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root { --primary: #38bdf8; --dark-bg: #090d16; --card-bg: rgba(15, 23, 42, 0.95); --border-glow: rgba(56, 189, 248, 0.3); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--dark-bg); color: #f8fafc; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+        
+        .login-box { max-width: 400px; width: 100%; background: var(--card-bg); border: 1px solid var(--border-glow); padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; }
+        .login-box h2 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1.5rem; }
+        .login-box p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .login-box input { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 8px; font-size: 1rem; text-align: center; margin-bottom: 1rem; }
+        
+        .admin-dashboard { display: none; max-width: 700px; width: 100%; background: var(--card-bg); border: 1px solid var(--border-glow); padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .admin-dashboard h2 { color: var(--primary); margin-bottom: 1rem; text-align: center; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+        label { font-size: 0.9rem; color: #cbd5e1; }
+        input[type="text"], textarea, select { background: #0f172a; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 8px; font-family: inherit; }
+        
+        .neon-btn { background: linear-gradient(135deg, #0284c7, #0d9488); color: #fff; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; text-transform: uppercase; transition: 0.3s; }
+        .neon-btn:hover { opacity: 0.9; box-shadow: 0 0 15px rgba(56,189,248,0.5); }
+        
+        /* Рўйхат элементлари стили */
+        .posts-list { margin-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
+        .post-row { display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 10px 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #334155; gap: 10px; }
+        .post-row span { font-size: 0.9rem; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 350px; }
+        .action-btns { display: flex; gap: 6px; }
+        .edit-btn { background: #f59e0b; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .del-btn { background: #ef4444; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+
+        .back-link { display: inline-block; margin-top: 1.5rem; color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+        .back-link:hover { color: var(--primary); }
+
+        #custom-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .popup-content { background: #0f172a; border: 2px solid #ef4444; padding: 2.5rem; max-width: 380px; width: 90%; text-align: center; border-radius: 16px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+        .popup-icon { font-size: 45px; margin-bottom: 10px; }
+        .popup-content h3 { color: #ef4444; margin-bottom: 10px; font-size: 1.3rem; }
+        .popup-content p { font-size: 0.9rem; color: #cbd5e1; margin-bottom: 20px; line-height: 1.5; }
+        .popup-btn { background: #ef4444; color: #fff; border: none; padding: 10px 25px; font-weight: 600; cursor: pointer; border-radius: 6px; text-transform: uppercase; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Кириш экрани -->
+    <div id="login-screen" class="login-box">
+        <h2>Админ Кабинети</h2>
+        <p>Кириш учун махсус телефон рақамингизни киритинг</p>
+        <input type="tel" id="admin-phone" placeholder="+998 50 119 11 46" value="+998 ">
+        <button class="neon-btn" onclick="verifyLogin()">Кириш</button>
+        <br>
+        <a href="index.html" class="back-link">← Асосий сайтга қайтиш</a>
+    </div>
+
+    <!-- 2. Админ панель -->
+    <div id="dashboard-screen" class="admin-dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>Маъмурият Панели</h2>
+            <button class="neon-btn" style="width: auto; padding: 6px 12px; font-size: 0.75rem; background: #ef4444;" onclick="logoutAdmin()">Чиқиш</button>
+        </div>
+        <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1.5rem;">Сайтга янгилик қўшиш, уларни таҳрирлаш ёки ўчириш.</p>
+
+        <input type="hidden" id="edit-index" value="-1">
+
+        <div class="form-group">
+            <label>Мазмун тури:</label>
+            <select id="media-type" onchange="toggleMediaType()">
+                <option value="image">Расм юклаш</option>
+                <option value="video">YouTube Видео (iframe код)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Сарлавҳа:</label>
+            <input type="text" id="post-title" placeholder="Масалан: Янги видео лавҳа">
+        </div>
+
+        <div class="form-group" id="file-input-group">
+            <label>Расм файлини танлаш:</label>
+            <input type="file" id="post-file" accept="image/*" style="background:none; border:none; padding:0;">
+        </div>
+
+        <div class="form-group" id="iframe-input-group" style="display: none;">
+            <label>YouTube Iframe коди:</label>
+            <textarea id="post-iframe" rows="3" placeholder='<iframe width="100%" height="200" src="..." ...></iframe>'></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Қисқача тавсиф:</label>
+            <textarea id="post-desc" rows="2" placeholder="Батафсил маълумот..."></textarea>
+        </div>
+
+        <button id="save-btn" class="neon-btn" onclick="savePost()">Сайтга чиқариш</button>
+        
+        <!-- Мавжуд мақолалар рўйхати ва бошқарув -->
+        <div class="posts-list">
+            <h3 style="color:var(--primary); font-size:1.1rem; margin-bottom:1rem;">Мавжуд мақола ва видеолар:</h3>
+            <div id="admin-posts-container">
+                <!-- JavaScript орқали рўйхат чиқади -->
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Асосий сайтга қайтиш</a>
+    </div>
+
+    <!-- Хавфсизлик модали -->
+    <div id="custom-popup">
+        <div class="popup-content">
+            <div class="popup-icon">🤖👮‍♂️</div>
+            <h3>Сизга мумкинмас!</h3>
+            <p>Бу админ панелига фақат ваколатли шахс кира олади. Киритилган рақам рўйхатда мавжуд эмас!</p>
+            <button class="popup-btn" onclick="closePopup()">Тўғри</button>
+        </div>
+    </div>
+
+    <script>
+        const ALLOWED_PHONE = "+998501191146";
+
+        function verifyLogin() {
+            let inputPhone = document.getElementById('admin-phone').value.trim().replace(/\s+/g, '');
+            if (inputPhone === ALLOWED_PHONE) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'block';
+                renderAdminPosts();
+            } else {
+                document.getElementById('custom-popup').style.display = 'flex';
+            }
+        }
+
+        function closePopup() { document.getElementById('custom-popup').style.display = 'none'; }
+
+        function logoutAdmin() {
+            document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'block';
+            document.getElementById('admin-phone').value = '+998 ';
+        }
+
+        function toggleMediaType() {
+            const type = document.getElementById('media-type').value;
+            if (type === 'image') {
+                document.getElementById('file-input-group').style.display = 'flex';
+                document.getElementById('iframe-input-group').style.display = 'none';
+            } else {
+                document.getElementById('file-input-group').style.display = 'none';
+                document.getElementById('iframe-input-group').style.display = 'flex';
+            }
+        }
+
+        function renderAdminPosts() {
+            const container = document.getElementById('admin-posts-container');
+            const posts = JSON.parse(localStorage.getItem('dr_universal_posts')) || [];
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<p style="color:#64748b; font-size:0.9rem;">Ҳозирча ҳеч қандай хабар йўқ.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            posts.forEach((p, index) => {
+                container.innerHTML += `
+                    <div class="post-row">
+                        <span><b>${index + 1}.</b> ${p.title}</span>
+                        <div class="action-btns">
+                            <button class="edit-btn" onclick="editPost(${index})">Ўзгартириш</button>
+                            <button class="del-btn" onclick="deletePost(${index})">Ўчириш</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function savePost() {
+            const type = document.getElementById('media-type').value;
+            const title = document.getElementById('post-title').value.trim();
+            const desc = document.getElementById('post-desc').value.trim();
+            const fileInput = document.getElementById('post-file');
+            const iframeCode = document.getElementById('post-iframe').value.trim();
+            const editIndex = parseInt(document.getElementById('edit-index').value);
+
+            if (!title) {
+                alert('Илтимос, сарлавҳани киритинг!');
+                return;
+            }
+
+            let posts = JSON.parse(localStorage.getItem('dr_universal_posts')) || [];
+
+            if (type === 'image') {
+                const file = fileInput.files[0];
+                if (!file && editIndex === -1) {
+                    alert('Илтимос, расм танланг!');
+                    return;
+                }
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        saveDataToStorage(editIndex, { type: 'image', title, desc, content: e.target.result }, posts);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Агар таҳрир қилинаётган бўлса ва янги расм танланмаса, эски расмни сақлаб қоламиз
+                    let existingContent = editIndex !== -1 ? posts[editIndex].content : '';
+                    saveDataToStorage(editIndex, { type: 'image', title, desc, content: existingContent }, posts);
+                }
+            } else {
+                if (!iframeCode) {
+                    alert('Илтимос, YouTube iframe кодини киритинг!');
+                    return;
+                }
+                saveDataToStorage(editIndex, { type: 'video', title, desc, content: iframeCode }, posts);
+            }
+        }
+
+        function saveDataToStorage(index, postObj, posts) {
+            if (index === -1) {
+                posts.unshift(postObj);
+                alert('Янгилик муваффақиятли қўшилди!');
+            } else {
+                posts[index] = postObj;
+                document.getElementById('edit-index').value = -1;
+                document.getElementById('save-btn').textContent = 'Сайтга чиқариш';
+                alert('Янгилик муваффақиятли янгиланди!');
+            }
+
+            localStorage.setItem('dr_universal_posts', JSON.stringify(posts));
+            
+            // Формани тозалаш
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-desc').value = '';
+            document.getElementById('post-file').value = '';
+            document.getElementById('post-iframe').value = '';
+            renderAdminPosts();
+        }
+
+        function editPost(index) {
+            const posts = JSON.parse(localStorage.getItem('dr_universal_posts')) || [];
+            const p = posts[index];
+
+            document.getElementById('edit-index').value = index;
+            document.getElementById('media-type').value = p.type;
+            toggleMediaType();
+            document.getElementById('post-title').value = p.title;
+            document.getElementById('post-desc').value = p.desc;
+            
+            if (p.type === 'video') {
+                document.getElementById('post-iframe').value = p.content;
+            }
+
+            document.getElementById('save-btn').textContent = 'Ўзгаришларни сақлаш';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deletePost(index) {
+            if (confirm("Ушбу хабарни ўчириб ташлашни хоҳлайсизми?")) {
+                let posts = JSON.parse(localStorage.getItem('dr_universal_posts')) || [];
+                posts.splice(index, 1);
+                localStorage.setItem('dr_universal_posts', JSON.stringify(posts));
+                renderAdminPosts();
+                alert('Хабар ўчирилди!');
+            }
+        }
+    </script>
+</body>
+</html>
