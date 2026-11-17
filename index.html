@@ -83,7 +83,7 @@
         .card h3 { font-size: 1.2rem; margin-bottom: 0.6rem; color: #fff; }
         .card p { color: #94a3b8; font-size: 0.9rem; }
 
-        /* Янгиликлар лентаси (босилганда post.html га ўтади) */
+        /* Янгиликлар лентаси */
         .dynamic-feed { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
         .feed-card {
             background: var(--card-bg); border: 1px solid var(--border-glow); border-radius: 16px; overflow: hidden; padding: 1rem;
@@ -125,6 +125,7 @@
             <li><a href="#about">Биз ҳақимизда</a></li>
             <li><a href="#services">Касалликлар</a></li>
             <li><a href="#treatments">Даволаш</a></li>
+            <li><a href="#courses">Ўқув курслари</a></li>
             <li><a href="#news">Янгиликлар</a></li>
             <li><a href="#contact">Боғланиш</a></li>
         </ul>
@@ -149,6 +150,7 @@
 
     <div class="container">
         
+        <!-- Касалликлар -->
         <section id="services">
             <div class="section-title">
                 <h2>Биз даволайдиган касалликлар</h2>
@@ -162,7 +164,34 @@
             </div>
         </section>
 
-        <!-- Янгиликлар ва мақолалар рўйхати (динамик) -->
+        <!-- Даволаш турлари (Қайта қўшилди) -->
+        <section id="treatments" style="margin-top: 4rem;">
+            <div class="section-title">
+                <h2>Асосий даволаш йўналишларимиз</h2>
+                <p>Синалган табобат ва тиббиёт усуллари</p>
+            </div>
+            <div class="grid">
+                <div class="card"><div class="icon-box"><i class="fa-solid fa-circle-check"></i></div><h3>1. Хижама</h3><p>Қон олдириш орқали организмни шлаклардан тозалаш.</p></div>
+                <div class="card"><div class="icon-box"><i class="fa-solid fa-circle-check"></i></div><h3>2. Апитерапия</h3><p>Асалари маҳсулотлари билан табиий даволаш.</p></div>
+                <div class="card"><div class="icon-box"><i class="fa-solid fa-circle-check"></i></div><h3>3. Биокоррекция</h3><p>Тана биоритмларини тиклаш ва тўғрилаш.</p></div>
+                <div class="card"><div class="icon-box"><i class="fa-solid fa-circle-check"></i></div><h3>4. Мануал терапия</h3><p>Омуртқа ва бўғимлар ҳаракатчанлигини тиклаш.</p></div>
+            </div>
+        </section>
+
+        <!-- Ўқув курслари (Қайта қўшилди) -->
+        <section id="courses" style="margin-top: 4rem;">
+            <div class="section-title">
+                <h2>Хотин-қизлар учун ўқув курслари</h2>
+                <p>Масканимизда даволашдан ташқари касб ўрганиш курслари ҳам мавжуд</p>
+            </div>
+            <div class="grid">
+                <div class="card"><div class="icon-box" style="background: rgba(245, 158, 11, 0.15); color: var(--accent);"><i class="fa-solid fa-graduation-cap"></i></div><h3>1. Хижама курси</h3><p>Хижама сирларини профессионал даражада ўрганиб, амалиёт қилишни ўзлаштиринг.</p></div>
+                <div class="card"><div class="icon-box" style="background: rgba(245, 158, 11, 0.15); color: var(--accent);"><i class="fa-solid fa-graduation-cap"></i></div><h3>2. Апитерапия курси</h3><p>Асалари маҳсулотлари орқали даволаш усулларини мутахассислардан ўрганинг.</p></div>
+                <div class="card"><div class="icon-box" style="background: rgba(245, 158, 11, 0.15); color: var(--accent);"><i class="fa-solid fa-graduation-cap"></i></div><h3>3. Биокоррекция курси</h3><p>Организмни биокоррекция қилиш ва соғломлаштириш сирларини ўрганинг.</p></div>
+            </div>
+        </section>
+
+        <!-- Янгиликлар ва видеолар -->
         <section id="news" style="margin-top: 4rem;">
             <div class="section-title">
                 <h2>Маъмурият янгиликлари ва видеолар</h2>
@@ -198,7 +227,6 @@
     </footer>
 
     <script>
-        // Мақолаларни автоматик ўқиб, index.html саҳифасига чиқарувчи скрипт
         window.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('dynamic-news-container');
             const posts = JSON.parse(localStorage.getItem('dr_universal_posts')) || [];
@@ -217,7 +245,6 @@
                     previewMedia = `<div style="background:#1e293b; height:180px; display:flex; align-items:center; justify-content:center; color:#38bdf8; border-radius:10px; font-weight:600;"><i class="fa-solid fa-play" style="margin-right:8px;"></i> Видео лавҳа</div>`;
                 }
 
-                // Ҳар бир карточка босилганда post.html саҳифасига ID орқали ўтади
                 container.innerHTML += `
                     <a href="post.html?id=${index}" class="feed-card">
                         ${previewMedia}
