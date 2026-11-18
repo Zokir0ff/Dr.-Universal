@@ -247,34 +247,43 @@
         <p>&copy; 2026 Dr. Universal Соғломлаштириш ва Ўқув Маркази. Барча ҳуқуқлар ҳимояланган.</p>
     </footer>
 
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('dynamic-news-container');
-            const posts = JSON.parse(localStorage.getItem('dr_universal_posts')) || [];
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-            if (posts.length === 0) {
-                container.innerHTML = '<p style="color:#64748b; text-align:center; grid-column:1/-1;">Ҳозирча янгиликлар қўшилмади.</p>';
-                return;
-            }
+    const firebaseConfig = {
+        apiKey: "AIzaSyCZmmcH3NZfV0-KUtV3-vgrWm_NSuBqouc",
+        authDomain: "druniversal-1e65c.firebaseapp.com",
+        databaseURL: "https://druniversal-1e65c-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "druniversal-1e65c",
+        storageBucket: "druniversal-1e65c.firebasestorage.app",
+        messagingSenderId: "64653989178",
+        appId: "1:64653989178:web:5a2df8e7465efe97a2ec03",
+        measurementId: "G-VKSDLVSZXD"
+    };
 
-            container.innerHTML = '';
-            posts.forEach((post, index) => {
-                let previewMedia = '';
-                if (post.type === 'image') {
-                    previewMedia = `<img src="${post.content}" alt="Янгилик расми">`;
-                } else {
-                    previewMedia = `<div style="background:#1e293b; height:160px; display:flex; align-items:center; justify-content:center; color:#38bdf8; border-radius:10px; font-weight:600;"><i class="fa-solid fa-play" style="margin-right:8px;"></i> Видео лавҳа</div>`;
-                }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-                container.innerHTML += `
-                    <a href="post.html?id=${index}" class="feed-card">
-                        ${previewMedia}
-                        <h4>${post.title}</h4>
-                        <p>${post.desc.substring(0, 80)}...</p>
-                    </a>
-                `;
+    // Масалан, формани юбориш тугмаси ёки функцияси ичида:
+    window.saveNewPost = function(title, desc, type, content) {
+        const postData = {
+            title: title,
+            desc: desc,
+            type: type,
+            content: content,
+            timestamp: Date.now()
+        };
+
+        push(ref(db, 'posts'), postData)
+            .then(() => {
+                alert("Янгилик муваффақиятли қўшилди ва барча қурилмаларга тарқатилди!");
+                // Формани тозалаш ёки бошқа саҳифага ўтиш
+            })
+            .error((error) => {
+                alert("Хатолик юз берди: " + error.message);
             });
-        });
-    </script>
+    };
+</script>
 </body>
 </html>
