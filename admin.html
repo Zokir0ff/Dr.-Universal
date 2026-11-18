@@ -122,10 +122,10 @@
         </div>
     </div>
 
-    <script>
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCZmmcH3NZfV0-KUtV3-vgrWm_NSuBqouc",
@@ -141,42 +141,26 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.addEventListener('DOMContentLoaded', () => {
-        const container = document.getElementById('dynamic-news-container');
-        const postsRef = ref(db, 'posts');
+    // Масалан, формани юбориш тугмаси ёки функцияси ичида:
+    window.saveNewPost = function(title, desc, type, content) {
+        const postData = {
+            title: title,
+            desc: desc,
+            type: type,
+            content: content,
+            timestamp: Date.now()
+        };
 
-        // Real vaqt rejimida ma'lumotlarni o'qish
-        onValue(postsRef, (snapshot) => {
-            const data = snapshot.val();
-            container.innerHTML = '';
-
-            if (!data) {
-                container.innerHTML = '<p style="color:#64748b; text-align:center; grid-column:1/-1;">Ҳозирча янгиликлар қўшилмади.</p>';
-                return;
-            }
-
-            // Firebase object qaytargни учун уни массивга ўтказиб оламиз
-            const posts = Object.entries(data).map(([key, value]) => ({ id: key, ...value }));
-
-            // Сўнгги қўшилганлар олдинга чиқиши учун тескари тартибда чиқарамиз
-            posts.reverse().forEach((post) => {
-                let previewMedia = '';
-                if (post.type === 'image') {
-                    previewMedia = `<img src="${post.content}" alt="Янгилик расми">`;
-                } else {
-                    previewMedia = `<div style="background:#1e293b; height:160px; display:flex; align-items:center; justify-content:center; color:#38bdf8; border-radius:10px; font-weight:600;"><i class="fa-solid fa-play" style="margin-right:8px;"></i> Видео лавҳа</div>`;
-                }
-
-                container.innerHTML += `
-                    <a href="post.html?id=${post.id}" class="feed-card">
-                        ${previewMedia}
-                        <h4>${post.title}</h4>
-                        <p>${post.desc ? post.desc.substring(0, 80) : ''}...</p>
-                    </a>
-                `;
+        push(ref(db, 'posts'), postData)
+            .then(() => {
+                alert("Янгилик муваффақиятли қўшилди ва барча қурилмаларга тарқатилди!");
+                // Формани тозалаш ёки бошқа саҳифага ўтиш
+            })
+            .error((error) => {
+                alert("Хатолик юз берди: " + error.message);
             });
-        });
-    });
+    };
+
         const ALLOWED_PHONE = "+998501191146";
 
         function verifyLogin() {
